@@ -1,0 +1,112 @@
+---
+description: "Output format standards for user stories, acceptance criteria, product backlog, work tickets, and effort estimation. Apply when generating or reviewing any of these artifacts."
+alwaysApply: false
+---
+
+## User Story template
+
+Use this exact template for every user story:
+
+---
+
+### US-[NNN]: [Short descriptive title]
+
+**Type:** [Feature | Enhancement | Technical | Bug]
+**Epic:** [Parent epic name]
+**Priority:** [Critical | High | Medium | Low]
+**Estimate:** [Story points using Fibonacci: 1, 2, 3, 5, 8, 13, 21]
+
+**User Story:**
+As a [role], I want to [action] so that [benefit].
+
+**Description:**
+[2-3 sentences providing context and business justification.]
+
+**Acceptance Criteria (BDD format):**
+
+- **Scenario 1: [Happy path name]**
+  - Given [initial context]
+  - When [action performed]
+  - Then [expected result]
+
+- **Scenario 2: [Error or edge case name]**
+  - Given [initial context]
+  - When [action performed]
+  - Then [expected result]
+
+- **Scenario 3: [Edge case or alternative flow]**
+  - Given [initial context]
+  - When [action performed]
+  - Then [expected result]
+
+**INVEST Evaluation:**
+
+- Independent: [Yes / No — reason if No]
+- Negotiable: [Yes / No — reason if No]
+- Valuable: [Yes / No — reason if No]
+- Estimable: [Yes / No — reason if No]
+- Small: [Yes / No — reason if No]
+- Testable: [Yes / No — reason if No]
+
+**Related Stories:** [US-NNN, US-NNN or None]
+**Notes:** [Technical notes, constraints, or open questions]
+
+---
+
+## Product Backlog table format
+
+| Priority | ID  | Title | Epic | Business Value | Urgency | Complexity | Risk | Score |
+| -------- | --- | ----- | ---- | -------------- | ------- | ---------- | ---- | ----- |
+
+Scoring scale for Business Value, Urgency, Complexity, Risk: 1 (low) to 5 (high).
+Score = (Business Value + Urgency) / (Complexity + Risk).
+Sort descending by Score.
+State the prioritization methodology used and justify the top 3 choices.
+
+## Work Ticket template
+
+Use this exact template for every work ticket:
+
+---
+
+### TICKET-[NNN]: [Short descriptive title]
+
+**Parent Story:** US-[NNN]
+**Type:** [Feature | Technical Task | Bug | Spike | Test]
+**Assignee:** [Team / Role]
+**Priority:** [Critical | High | Medium | Low]
+**Estimate:** [Fibonacci story points] | [T-shirt size: XS/S/M/L/XL]
+**Sprint:** [Sprint number or TBD]
+**Labels:** [e.g. backend, frontend, security, database]
+
+**Description:**
+[Detailed technical description of what needs to be done and why.]
+
+**Technical Details:**
+
+- [Specific technical requirement or implementation note]
+- [API endpoints, data schema changes, or service interactions affected]
+- [Non-functional requirements: performance, security, scalability]
+
+**Acceptance Criteria:**
+
+- [ ] [Concrete, verifiable condition 1]
+- [ ] [Concrete, verifiable condition 2]
+- [ ] [Concrete, verifiable condition 3]
+
+**Dependencies:** [TICKET-NNN or None]
+**Related Docs:** [Link to relevant architecture, data model, or design doc]
+**Notes:** [Open questions, risks, or additional context]
+
+---
+
+## Effort estimation format
+
+Produce a summary table after all tickets:
+
+| Ticket | Title | Story Points | T-Shirt Size | Confidence | Notes |
+| ------ | ----- | ------------ | ------------ | ---------- | ----- |
+
+Confidence scale: High / Medium / Low.
+Add a total story points sum at the bottom.
+State the estimation methodology used (Fibonacci + T-shirt sizing).

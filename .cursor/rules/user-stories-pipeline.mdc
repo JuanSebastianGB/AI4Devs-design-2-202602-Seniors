@@ -1,0 +1,33 @@
+---
+description: "User stories pipeline. Apply when the user asks to generate user stories, create or prioritize a product backlog, generate work tickets, or estimate effort for an agile project."
+alwaysApply: false
+---
+
+## Pipeline sequence
+
+When asked to generate agile artifacts, follow this sequence:
+
+1. Read existing project documentation from docs/ as source of truth.
+   Priority order: prd.md → use-cases.md → data-model.md → architecture.md
+2. Generate User Stories → LTI-JSGB/UserStories-JSGB.md
+3. Build and prioritize the Product Backlog → same file, section 2
+4. Generate Work Tickets for the chosen User Story → same file, section 3
+5. Estimate effort for all tickets → same file, section 4
+
+## Subagent delegation map
+
+| Task                                      | Subagent        |
+| ----------------------------------------- | --------------- |
+| Generate user stories from existing docs  | product-owner   |
+| Prioritize backlog with named methodology | backlog-manager |
+| Generate and estimate work tickets        | sprint-planner  |
+
+## Output rules
+
+- All output goes into a single file: LTI-JSGB/UserStories-JSGB.md
+- Create the LTI-JSGB/ folder if it does not exist.
+- All content must be in English.
+- Use the template defined in user-stories-standards.mdc for every user story.
+- Do not stop between sections. Complete all 4 sections in one pass.
+- Flag any assumption with [ASSUMPTION: ...] and continue.
+- Do not invent requirements not present in the source documentation.
