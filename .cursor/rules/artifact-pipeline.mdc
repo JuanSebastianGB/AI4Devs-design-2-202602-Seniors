@@ -1,0 +1,36 @@
+---
+description: "Definition and design pipeline. Apply when the user asks to define, design, document, or generate artifacts for a software system (PRD, use cases, data model, architecture, ADR, Lean Canvas, C4)."
+alwaysApply: false
+---
+
+## Artifact pipeline
+
+When asked to generate software definition artifacts, follow this sequence:
+
+1. Overview + Lean Canvas → docs/lti-overview.md
+2. Competitive analysis → docs/competitive-analysis.md
+3. Use cases + PlantUML diagrams → docs/use-cases.md
+4. Data model + Mermaid erDiagram → docs/data-model.md
+5. Architecture explanation + Mermaid diagram → docs/architecture.md
+6. C4 model (levels 1, 2, 3) → docs/c4-diagram.md
+7. ADRs (one per significant decision) → docs/adr/NNN-title.md
+
+## Subagent delegation map
+
+| Artifact                       | Subagent             |
+| ------------------------------ | -------------------- |
+| PRD, user stories, Lean Canvas | requirements-analyst |
+| Competitive analysis           | requirements-analyst |
+| Use cases + PlantUML diagrams  | requirements-analyst |
+| Data model + ER diagram        | data-architect       |
+| Architecture diagram           | system-architect     |
+| C4 diagram (all levels)        | system-architect     |
+| ADR                            | adr-writer           |
+
+## Execution rules
+
+- Read project context exclusively from the user's prompt.
+- Flag ambiguities with [ASSUMPTION: ...] and continue without stopping.
+- Never invent requirements not present in the prompt.
+- Save every artifact to docs/ unless explicitly told otherwise.
+- Confirm each file is written before moving to the next artifact.

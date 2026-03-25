@@ -1,0 +1,70 @@
+---
+description: "Output format standards for PRD, use cases, data model, architecture diagrams, Lean Canvas, and ADRs. Apply when generating or reviewing any of these artifacts."
+alwaysApply: false
+---
+
+## PRD structure
+
+- Problem statement
+- Measurable objectives (OKR or KPI format)
+- Primary and secondary actors
+- Main user stories (As a [role], I want [action], so that [value])
+- Functional requirements (numbered list)
+- Non-functional requirements (performance, security, scalability, availability)
+- Out of scope
+- Success criteria (measurable)
+
+## Lean Canvas structure
+
+- Problem (top 3 problems)
+- Customer Segments (target customers and early adopters)
+- Unique Value Proposition
+- Solution (top 3 features)
+- Channels
+- Revenue Streams
+- Cost Structure
+- Key Metrics
+- Unfair Advantage
+  Render as a structured markdown table with all 9 sections.
+
+## Use case standards
+
+- Use PlantUML @startuml / @enduml blocks.
+- Differentiate external/anonymous actors from internal authenticated users.
+- Use <<include>> for mandatory sub-flows, <<extend>> for optional ones.
+- For each use case provide: name, description, actors, preconditions,
+  postconditions, main flow (numbered), alternative/exception flows.
+
+## Data model standards
+
+- Use Mermaid erDiagram blocks.
+- Include PK and FK fields explicitly with data types.
+- Annotate cardinality on every relationship.
+- After the diagram add a summary table: Entity | Purpose | Key Relationships.
+
+## Architecture diagram standards
+
+- Use Mermaid graph TD for high-level views.
+- Label every arrow with protocol or data type (REST, gRPC, events, SMTP, OAuth).
+- Group services by domain boundary using subgraphs.
+- Include: frontend, API gateway, core services, data stores,
+  external integrations, async workers, CDN, load balancer.
+
+## C4 diagram standards
+
+- Level 1 (System Context): Mermaid C4Context block.
+- Level 2 (Container): Mermaid block showing main containers.
+- Level 3 (Component): Mermaid block zooming into one specific service.
+- After each level add a short paragraph explaining what the diagram
+  shows and the key design decisions visible in it.
+
+## ADR structure (MADR format)
+
+- Title
+- Status (Proposed / Accepted / Deprecated / Superseded)
+- Context and problem statement
+- Decision drivers
+- Considered options (at least two)
+- Decision outcome
+- Pros and cons of each option
+- Consequences
