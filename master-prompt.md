@@ -27,6 +27,29 @@ Reference image for context: docs/assets/ats-workflow.png
 
 ## Required artifacts
 
+ARTIFACT 0 — docs/prd.md
+Delegate to the requirements-analyst subagent.
+
+Generate a complete PRD covering:
+
+- Problem statement: what pain does LTI's ATS solve and for whom
+- Measurable objectives (OKR format, minimum 3)
+- Primary actors: Recruiter, HR Team, Hiring Manager, Admin
+- Secondary actors: Candidate, HRIS systems, Job Boards, Assessment Tools
+- Main user stories (minimum 5, format: As a [role], I want [action]
+  so that [benefit])
+- Functional requirements (numbered list, grouped by lifecycle stage:
+  Job Creation | Publishing | Application Intake | Review & Screening |
+  Assessments | Interview Scheduling | Hiring & Offer)
+- Non-functional requirements covering:
+  - Performance (page load, concurrent users)
+  - Security (candidate PII, data privacy, authentication)
+  - Scalability (enterprise load, multi-tenant)
+  - Availability (uptime SLA)
+  - Integrations (job boards, LinkedIn, HRIS, calendar, assessments)
+- Out of scope for v1 (explicit list)
+- Success criteria (measurable KPIs tied to the objectives)
+
 ARTIFACT 1 — docs/lti-overview.md
 
 - 2-3 paragraph description of LTI's ATS
