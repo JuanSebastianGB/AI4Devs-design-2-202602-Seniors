@@ -233,7 +233,7 @@ UC3_Offer ..> UC3_Accept : <<include>>
 Candidate --> UC3_Accept
 
 UC3_Accept ..> UC3_Handoff : <<include>>
-UC3_Offer ..> UC3_VirtualMeeting : <<extend>>
+UC3_Schedule ..> UC3_VirtualMeeting : <<extend>>
 
 @enduml
 ```
