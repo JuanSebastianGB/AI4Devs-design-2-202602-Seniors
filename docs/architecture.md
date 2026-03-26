@@ -228,6 +228,7 @@ graph TD
   OH_Service -->|REST| HRIS
 
   %% Notifications (async)
+  AP_Router -->|events| AP_NotifyDispatcher
   AP_NotifyDispatcher -->|events| Queue
   Queue -->|events| NS_Worker
   NS_Worker -->|SMTP| EmailSMTP
