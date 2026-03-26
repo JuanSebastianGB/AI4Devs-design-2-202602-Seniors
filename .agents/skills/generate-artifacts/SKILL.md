@@ -19,7 +19,8 @@ This skill coordinates the complete software definition pipeline.
 
 ## Instructions
 
-1. Read AGENTS.md to load project context (system name, actors, goals, lifecycle).
+1. Load project context from the user prompt (and any paths they name). Do not
+   depend on `AGENTS.md` in this repo.
 2. Read .cursor/rules/artifact-pipeline.mdc for pipeline sequence and delegation rules.
 3. Read .cursor/rules/software-definition-standards.mdc for output format contracts.
 4. For each artifact requested:

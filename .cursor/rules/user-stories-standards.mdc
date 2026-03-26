@@ -1,6 +1,6 @@
 ---
 description: "Output format standards for user stories, acceptance criteria, product backlog, work tickets, and effort estimation. Apply when generating or reviewing any of these artifacts."
-alwaysApply: false
+alwaysApply: true
 ---
 
 ## User Story template
@@ -66,6 +66,8 @@ State the prioritization methodology used and justify the top 3 choices.
 ## Work Ticket template
 
 Use this exact template for every work ticket:
+
+**Id rule:** Use sequential ids **001, 002, 003, …** per planning pass (`TICKET-001`, not arbitrary bases like 301).
 
 ---
 

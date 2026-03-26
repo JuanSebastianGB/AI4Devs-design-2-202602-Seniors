@@ -1,100 +1,171 @@
-Use the generate-user-stories skill.
+/generate-user-stories
 
-## Source documentation
+# Master prompt: user stories pipeline (agentic)
 
-Read the following files from docs/ to extract all project context.
-Do not ask for additional input — derive everything from these files:
+**Trigger:** Paste this file into the chat, or invoke skill `generate-user-stories`.
 
-- docs/lti-overview.md
-- docs/use-cases.md
-- docs/data-model.md
-- docs/architecture.md
-
-## Required output
-
-Generate a single file at LTI-JSGB/UserStories-JSGB.md
-structured in 4 sections as defined below.
-All content must be in English.
+**Goal:** One coordinator turn that runs **three** `Task` subagents **in sequence**, then writes **one** markdown file with **four** sections. No inline generation of stories, backlog, or tickets by the coordinator.
 
 ---
 
-SECTION 1 — User Stories
-Delegate to the product-owner subagent.
+## 1. Coordinator role (non-negotiable)
 
-- Generate a minimum of 8 user stories covering the most impactful
-  features of LTI's ATS across the full recruitment lifecycle.
-- Cover all actor types: Recruiter, Candidate, Hiring Manager,
-  Admin, and System.
-- Group stories under named Epics aligned to these lifecycle stages:
-  Job Creation | Publishing | Application Intake | Review & Screening |
-  Assessments | Interview Scheduling | Hiring & Offer
-- Apply the user story template from user-stories-standards.mdc exactly.
-  Every field must be populated. No placeholders.
-- Evaluate every story against INVEST criteria.
-  Rewrite any story that fails any criterion before including it.
-- Assign Fibonacci story point estimates to each story.
+| Rule | Detail |
+| ---- | ------ |
+| Execution | Call **Task** with `subagent_type` in order; **wait** for each result before the next. |
+| Forbidden | Writing Section 1–3 body content yourself without those Task runs. |
+| Allowed | Merging subagent outputs, writing the final file, short reply + summary table. |
+| Templates | Follow `.cursor/rules/user-stories-standards.mdc` for story, backlog table, ticket, and estimation formats. |
+| Language | All artifact text in **English**. Mark gaps with `[ASSUMPTION: ...]`. |
+| Truth | Do not invent requirements; only use what appears in the source files below (when they exist). |
 
 ---
 
-SECTION 2 — Product Backlog
-Delegate to the backlog-manager subagent.
+## 2. Source documentation (read order)
 
-- Take all user stories from Section 1 as input.
-- Apply Value vs Complexity scoring:
-  Score = (Business Value + Urgency) / (Complexity + Risk)
-  Rate each dimension 1-5.
-- Produce the prioritized backlog table from user-stories-standards.mdc.
-- Sort descending by Score.
-- After the table:
-  a) State the methodology used and why it was chosen.
-  b) Justify the top 3 prioritized stories in 2-3 sentences each.
-  c) Identify dependency chains that affect the ordering.
-  d) Draw a clear MVP line indicating which stories form the MVP scope.
+**Coordinator:** Pass these paths into Task prompts (subagents read with repo tools). **Skip** paths that do not exist.
 
----
+| Priority | Path |
+| -------- | ---- |
+| 1 | `docs/prd.md` |
+| 2 | `docs/lti-overview.md` |
+| 3 | `docs/use-cases.md` |
+| 4 | `docs/data-model.md` |
+| 5 | `docs/architecture.md` |
 
-SECTION 3 — Work Tickets
-Delegate to the sprint-planner subagent.
-
-- Select the highest-priority user story from Section 2.
-- Break it down into a minimum of 5 concrete work tickets covering
-  all technical layers required:
-  database schema | backend API | business logic | frontend |
-  integrations | automated tests | documentation
-- Apply the work ticket template from user-stories-standards.mdc exactly.
-- Order tickets by dependency (blockers first).
-- Include at least one ticket dedicated to non-functional requirements
-  (performance, security, or scalability).
+If a file is missing, subagents proceed with remaining sources only.
 
 ---
 
-SECTION 4 — Effort Estimation
-Handled by the sprint-planner subagent as part of Section 3.
+## 3. Task sequence (copy-shaped prompts)
 
-- For every ticket from Section 3 assign:
-  a) Fibonacci story points (1, 2, 3, 5, 8, 13, 21)
-  b) T-shirt size (XS, S, M, L, XL)
-  c) Confidence level (High, Medium, Low) with a one-line reason
-- Produce the effort estimation summary table from
-  user-stories-standards.mdc.
-- Add a total story points sum at the bottom.
-- Add a sprint allocation recommendation: how many 2-week sprints
-  would the tickets in Section 3 require, and why.
+**Placeholder:** In the three prompt bodies below, replace `{workspace-folder-name}` with this repository’s root folder name (Engram / mem project key).
+
+### Task 1 — `product-owner`
+
+**subagent_type:** `product-owner`
+
+**Prompt body (adapt paths only if needed):**
+
+```text
+SKILL LOADING (do this FIRST):
+Check for available skills: mem_search(query: "skill-registry", project: "{workspace-folder-name}")
+Fallback: read .atl/skill-registry.md — load skills that match this task.
+
+You are the product-owner subagent. Read these paths if they exist (repo root), in order:
+docs/prd.md, docs/lti-overview.md, docs/use-cases.md, docs/data-model.md, docs/architecture.md
+
+Output ONLY Section 1 material: user stories using the exact template in .cursor/rules/user-stories-standards.mdc.
+Minimum 8 stories. English. [ASSUMPTION: ...] where the docs are silent. Do not output backlog or tickets.
+If you discover something worth persisting for the project, mem_save to engram with project: "{workspace-folder-name}".
+```
+
+**Coordinator:** Store the returned markdown as **STORIES** for Task 2.
 
 ---
 
-## Execution instructions
+### Task 2 — `backlog-manager`
 
-- Follow user-stories-pipeline.mdc for sequence and delegation.
-- Follow user-stories-standards.mdc for all format contracts.
-- Do not stop between sections. Complete all 4 in one pass.
-- Flag any ambiguity with [ASSUMPTION: ...] and continue.
-- Do not invent requirements not present in the source documentation.
-- When complete, output a summary table:
+**subagent_type:** `backlog-manager`
 
-| Section           | Content                               | Status |
-| ----------------- | ------------------------------------- | ------ |
-| User Stories      | N stories generated                   | Done   |
-| Product Backlog   | N stories prioritized, MVP line drawn | Done   |
-| Work Tickets      | N tickets for [story title]           | Done   |
-| Effort Estimation | Total: N story points                 | Done   |
+**Prompt body:**
+
+```text
+SKILL LOADING (do this FIRST):
+Check for available skills: mem_search(query: "skill-registry", project: "{workspace-folder-name}")
+Fallback: read .atl/skill-registry.md — load skills that match this task.
+
+You are the backlog-manager subagent. Below is the complete user stories markdown from the product-owner (verbatim). Do not re-derive requirements from other files unless needed to resolve an ID/title ambiguity.
+
+--- USER STORIES (verbatim) ---
+[PASTE FULL STORIES OUTPUT FROM TASK 1 HERE]
+---
+
+**Large outputs:** If pasting would exceed limits, write Task 1 output to e.g. `LTI-JSGB/_verbatim-stories.md` and replace the block above with: “Read `LTI-JSGB/_verbatim-stories.md` for verbatim stories.”
+
+Output ONLY Section 2: product backlog table per user-stories-standards.mdc.
+Score = (Business Value + Urgency) / (Complexity + Risk); sort descending.
+Include MVP line and justify top 3 picks. English.
+mem_save important decisions to engram with project: "{workspace-folder-name}" if applicable.
+```
+
+**Coordinator:** From this output, identify the **single highest-priority** story (first row after sort): full **US-xxx** block from **STORIES**. Keep **BACKLOG** markdown for the file.
+
+---
+
+### Task 3 — `sprint-planner`
+
+**subagent_type:** `sprint-planner`
+
+**Prompt body:**
+
+```text
+SKILL LOADING (do this FIRST):
+Check for available skills: mem_search(query: "skill-registry", project: "{workspace-folder-name}")
+Fallback: read .atl/skill-registry.md — load skills that match this task.
+
+You are the sprint-planner subagent.
+
+Priority user story (full block from product-owner output — must match backlog #1):
+[PASTE FULL BLOCK FOR TOP-PRIORITY US-xxx HERE]
+
+Read for technical context: docs/architecture.md, docs/data-model.md (skip if missing).
+
+Output ONLY Sections 3–4: work tickets (minimum 5) + effort summary table per user-stories-standards.mdc. English.
+Number tickets **TICKET-001**, **TICKET-002**, … in order; **Dependencies** must reference those ids.
+mem_save important technical choices to engram with project: "{workspace-folder-name}" if applicable.
+```
+
+**Coordinator:** Store result as **TICKETS_AND_ESTIMATION**.
+
+---
+
+## 4. Required output file
+
+| Field | Value |
+| ----- | ----- |
+| Path | `LTI-JSGB/UserStories-iniciales.md` |
+| Note | Course delivery path. If this prompt is not used, default is `docs/agile/UserStories.md` (see `user-stories-pipeline.mdc`). |
+
+**Create parent directories** if needed.
+
+**File structure:**
+
+```markdown
+# 1. User Stories
+
+[Paste STORIES from Task 1]
+
+# 2. Product Backlog
+
+[Paste BACKLOG from Task 2]
+
+# 3. Work Tickets
+
+[Paste ticket section from Task 3]
+
+# 4. Effort Estimation
+
+[Paste estimation table from Task 3]
+```
+
+Complete all sections in **one** write. Do not stop between sections.
+
+---
+
+## 5. Coordinator closing summary
+
+After writing the file, reply with a short table:
+
+| Section | Content | Status |
+| ------- | ------- | ------ |
+| User Stories | N stories | Done |
+| Product Backlog | N rows, MVP noted | Done |
+| Work Tickets | N tickets for [top story id] | Done |
+| Effort Estimation | Total SP | Done |
+
+---
+
+## 6. Inline paste fallback (only if subagents cannot read the repo)
+
+If policy blocks file access: coordinator reads each source file **once**, then in Task 1 paste under `--- SOURCE DOCUMENTS ---` instead of listing paths. Tasks 2–3 unchanged (still paste STORIES and top story). Prefer path-based delegation whenever possible.

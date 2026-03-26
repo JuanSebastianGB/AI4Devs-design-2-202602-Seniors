@@ -7,7 +7,9 @@ alwaysApply: false
 
 When asked to generate software definition artifacts, follow this sequence:
 
-1. Overview + Lean Canvas → docs/lti-overview.md
+1. Overview + Lean Canvas → docs/product-overview.md  
+   (If the user prompt or master prompt specifies another path — e.g.
+   `docs/domain-brief.md` — use that path.)
 2. Competitive analysis → docs/competitive-analysis.md
 3. Use cases + PlantUML diagrams → docs/use-cases.md
 4. Data model + Mermaid erDiagram → docs/data-model.md
