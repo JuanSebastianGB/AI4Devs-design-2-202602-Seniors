@@ -3,6 +3,18 @@
 This data model covers the end-to-end lifecycle:
 `requisitions -> publishing -> intake -> reviewing/screening -> online assessments -> interview scheduling/running -> hiring (offer -> onboarding handoff)`.
 
+## Document invariants
+
+1. **Application pipeline stage must match the application’s requisition path**  
+   When `Application.currentPipelineStageId` is non-null, the referenced `PipelineStage` MUST belong to the **same requisition** as the application’s posting:  
+   `PipelineStage.jobRequisitionId` MUST equal `JobPosting.jobRequisitionId` for the row identified by `Application.jobPostingId`.  
+   This forbids pointing an application at a stage defined for another requisition (cross-requisition stage assignment), even if both share the same `organizationId`.
+
+   **Recommended enforcement (pick one or combine):**
+   - **Scoped / composite FK:** Denormalize `jobRequisitionId` on `Application` (must equal the posting’s requisition) and declare a foreign key from `(currentPipelineStageId, jobRequisitionId)` to `PipelineStage` on `(id, jobRequisitionId)` (or equivalent composite unique constraint on `PipelineStage`), so the database rejects invalid pairs.
+   - **`CHECK` constraint or trigger:** Validate that the stage’s `jobRequisitionId` matches `(SELECT jp.job_requisition_id FROM job_posting jp WHERE jp.id = application.job_posting_id)` (names per your physical schema).
+   - **Application / domain layer:** Enforce on every write path that sets or moves `currentPipelineStageId`; use for defense in depth if the DB cannot express a scoped FK.
+
 ## Entities
 
 ### Organization
@@ -119,15 +131,15 @@ This data model covers the end-to-end lifecycle:
 - `submittedAt timestamptz`
 - `applicantEmailSnapshot text` (snapshot for auditing)
 - `status text` (e.g., `SUBMITTED`, `IN_SCREENING`, `IN_ASSESSMENT`, `INTERVIEW_SCHEDULED`, `OFFERED`, `HIRED`, `REJECTED`)
-- `currentPipelineStageId uuid` (FK, nullable)
-- `lastStageChangedAt timestamptz`
+- `currentPipelineStageId uuid` (FK to `PipelineStage.id`, nullable): The application’s active pipeline stage. When set, the referenced stage MUST be scoped to the **same requisition** as this application’s posting (`PipelineStage.jobRequisitionId` = `JobPosting.jobRequisitionId` for `Application.jobPostingId`). See **Document invariants**. Enforce via scoped/composite FK, `CHECK`/trigger, and/or domain validation so a stage from another requisition cannot be assigned.
+- `lastStageChangedAt timestamptz`: Last time `currentPipelineStageId` changed; updates MUST only reflect transitions to stages that satisfy the same requisition/posting scope as above.
 - `metadata jsonb`
 
 **Relationships (with cardinality)**
 - `Organization` (1) -- (N) `Application`
 - `JobPosting` (1) -- (N) `Application`
 - `Candidate` (1) -- (N) `Application`
-- `PipelineStage` (1) -- (N) `Application` (currentPipelineStageId) [REVIEW NEEDED]
+- `PipelineStage` (1) -- (N) `Application` (currentPipelineStageId) — relationship is **scoped**: the stage’s `jobRequisitionId` must match the application’s posting requisition (see **Document invariants**).
 - `Application` (1) -- (N) `Assessment`
 - `Application` (1) -- (N) `Interview`
 - `Application` (1) -- (N) `Offer`
@@ -149,7 +161,7 @@ This data model covers the end-to-end lifecycle:
 **Relationships (with cardinality)**
 - `Organization` (1) -- (N) `PipelineStage`
 - `JobRequisition` (1) -- (N) `PipelineStage`
-- `PipelineStage` (1) -- (N) `Application` (currentPipelineStageId) [REVIEW NEEDED]
+- `PipelineStage` (1) -- (N) `Application` (currentPipelineStageId) — only for applications whose `jobPostingId` resolves to the **same** `jobRequisitionId` as this stage (see **Document invariants**).
 
 **Business purpose (1 sentence)**
 - Defines the configured workflow stages used to guide applications through screening, assessments, interviews, and hiring.
@@ -226,6 +238,7 @@ This data model covers the end-to-end lifecycle:
 ## Mermaid ER Diagram
 
 ```mermaid
+%% Invariant: Application.currentPipelineStageId (when set) -> PipelineStage where PipelineStage.jobRequisitionId = JobPosting.jobRequisitionId for Application.jobPostingId
 erDiagram
   Organization {
     uuid id
@@ -291,8 +304,8 @@ erDiagram
     timestamptz submittedAt
     text applicantEmailSnapshot
     text status
-    uuid currentPipelineStageId
-    timestamptz lastStageChangedAt
+    uuid currentPipelineStageId FK "nullable; stage requisition = posting requisition"
+    timestamptz lastStageChangedAt "last scoped currentPipelineStageId change"
     jsonb metadata
   }
 
@@ -374,7 +387,7 @@ erDiagram
   JobPosting ||--o{ Application : receives
   Candidate ||--o{ Application : submits
 
-  PipelineStage ||--o{ Application : "current stage of [REVIEW NEEDED]"
+  PipelineStage ||--o{ Application : "current stage (same requisition as posting)"
 
   Application ||--o{ Assessment : has
   Application ||--o{ Interview : schedules
@@ -387,9 +400,9 @@ erDiagram
 |---|---|---|
 | `JobRequisition` | Defines the internal role request and pipeline configuration. | `Organization` (1..N), `User` (1..N), `JobPosting` (1..N) [REVIEW NEEDED], `PipelineStage` (1..N) |
 | `JobPosting` | Represents the published listing and intake window for candidates. | `Organization` (1..N), `JobRequisition` (1..N) [REVIEW NEEDED], `Application` (1..N) |
-| `Application` | Tracks a candidate submission and its progression through stages. | `JobPosting` (1..N), `Candidate` (1..N), `PipelineStage` (current, 1..N) [REVIEW NEEDED], `Assessment` (1..N), `Interview` (1..N), `Offer` (1..N) |
+| `Application` | Tracks a candidate submission and its progression through stages. | `JobPosting` (1..N), `Candidate` (1..N), `PipelineStage` via `currentPipelineStageId` (1..N, **scoped** to posting’s requisition; see **Document invariants**), `Assessment` (1..N), `Interview` (1..N), `Offer` (1..N) |
 | `Candidate` | Represents the person applying to job postings. | `Organization` (1..N), `Application` (1..N) |
-| `PipelineStage` | Models the pipeline workflow stages for screening/assessment/interviewing/hiring. | `Organization` (1..N), `JobRequisition` (1..N), `Application` current stage (1..N) [REVIEW NEEDED] |
+| `PipelineStage` | Models the pipeline workflow stages for screening/assessment/interviewing/hiring. | `Organization` (1..N), `JobRequisition` (1..N), `Application` via `currentPipelineStageId` (1..N, only when stage matches application posting requisition; see **Document invariants**) |
 | `Assessment` | Stores online assessment instances and results per application. | `Organization` (1..N), `Application` (1..N) |
 | `Interview` | Stores interview scheduling and execution metadata per application. | `Organization` (1..N), `Application` (1..N), `User` (1..N) [REVIEW NEEDED] |
 | `Offer` | Stores offer state and onboarding handoff status after hiring selection. | `Organization` (1..N), `JobRequisition` (1..N), `Application` (1..N), `User` (1..N) |
