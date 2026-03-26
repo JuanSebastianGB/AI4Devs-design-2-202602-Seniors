@@ -17,7 +17,8 @@ When invoked:
    software-definition-standards.mdc.
 3. Number the ADR sequentially. Check existing files in docs/adr/ to determine
    the next number. Start at 001 if none exist.
-4. Save output to docs/adr/NNN-short-title.md.
+4. Ensure docs/adr/ exists (create it if missing).
+5. Save output to docs/adr/NNN-short-title.md.
 
 Be concise but complete. Flag trade-offs honestly even when they favor
 alternatives to the chosen option.
