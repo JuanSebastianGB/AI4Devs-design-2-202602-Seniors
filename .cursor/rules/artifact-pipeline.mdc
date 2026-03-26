@@ -31,7 +31,9 @@ When asked to generate software definition artifacts, follow this sequence:
 
 ## Execution rules
 
-- Read project context exclusively from the user's prompt.
+- Read project context exclusively from the user's prompt, except when
+  sequence-dependent artifacts require repository inspection
+  (e.g., ADR numbering from docs/adr/).
 - Flag ambiguities with [ASSUMPTION: ...] and continue without stopping.
 - Never invent requirements not present in the prompt.
 - Save every artifact to docs/ unless explicitly told otherwise.
