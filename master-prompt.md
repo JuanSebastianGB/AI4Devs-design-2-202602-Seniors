@@ -156,10 +156,10 @@ ARTIFACT 5 — docs/c4-diagram.md
   - Artifact 3 -> data-architect subagent
   - Artifacts 4 and 5 -> system-architect subagent
 - Follow software-definition-standards.mdc for all output formats.
-- Follow artifact-pipeline.mdc for sequencing and file naming.
+- Follow artifact-pipeline.mdc sequencing only for the artifact types explicitly requested in this prompt.
 - Flag any ambiguity or missing information with [ASSUMPTION: ...]
   and continue without stopping.
-- Complete all 5 artifacts in one pass.
+- Complete only these 5 artifacts in one pass (skip competitive analysis and ADR generation unless explicitly requested).
 - When all artifacts are saved, output a completion summary table:
 
 | Artifact                   | File                 | Status |
