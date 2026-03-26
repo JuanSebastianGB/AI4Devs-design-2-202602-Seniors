@@ -19,8 +19,8 @@ When asked to generate agile artifacts, follow this sequence:
 
 ## Mandatory subagent orchestration (Cursor Task)
 
-**Do not** produce Sections 1–3 narrative (stories, backlog table, tickets) in
-the coordinator model’s own response without running the mapped subagents.
+**Do not** produce Sections 1–4 narrative (stories, backlog table, tickets, estimation) in
+the coordinator model's own response without running the mapped subagents.
 
 For each row below, the coordinator **must** invoke the **Task** tool with
 the given `subagent_type`, **wait** for the result, then pass that result into
