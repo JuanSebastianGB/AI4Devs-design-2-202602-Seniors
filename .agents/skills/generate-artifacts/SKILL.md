@@ -42,3 +42,9 @@ This skill coordinates the complete software definition pipeline.
 | Architecture diagram           | system-architect     |
 | C4 diagram                     | system-architect     |
 | ADR                            | adr-writer           |
+
+**Contract alignment:** When the user prompt numbers artifacts (e.g. Artifact 0
+for `docs/prd.md` plus Artifacts 1–5), the orchestrator must include every
+numbered deliverable in: delegation lines, the stated total count, and the
+final `| Artifact | File | Status |` table. PRD maps to **requirements-analyst**
+(same subagent as Lean Canvas and use cases per the table above).

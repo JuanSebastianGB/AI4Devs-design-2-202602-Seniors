@@ -152,18 +152,21 @@ ARTIFACT 5 — docs/c4-diagram.md
 
 - Use the generate-artifacts skill to coordinate all subagents.
 - Delegate as follows:
-  - Artifacts 1 and 2 -> requirements-analyst subagent
+  - Artifact 0 (PRD, docs/prd.md) and Artifacts 1 and 2 ->
+    requirements-analyst subagent
   - Artifact 3 -> data-architect subagent
   - Artifacts 4 and 5 -> system-architect subagent
 - Follow software-definition-standards.mdc for all output formats.
 - Follow artifact-pipeline.mdc sequencing only for the artifact types explicitly requested in this prompt.
 - Flag any ambiguity or missing information with [ASSUMPTION: ...]
   and continue without stopping.
-- Complete only these 5 artifacts in one pass (skip competitive analysis and ADR generation unless explicitly requested).
+- Complete all 6 artifacts (Artifacts 0–5) in one pass (skip competitive
+  analysis and ADR generation unless explicitly requested).
 - When all artifacts are saved, output a completion summary table:
 
 | Artifact                   | File                 | Status |
 | -------------------------- | -------------------- | ------ |
+| PRD                        | docs/prd.md          | Done   |
 | LTI Overview + Lean Canvas | docs/lti-overview.md | Done   |
 | Use Cases                  | docs/use-cases.md    | Done   |
 | Data Model                 | docs/data-model.md   | Done   |
