@@ -36,8 +36,10 @@ description: >
    - **Missing agent file:** create minimal `.cursor/agents/{name}.md` from a sibling agent as template (role, constraints, skill loading line) **or** remove dead references from rules/skills—choose the option the user confirmed.
    - **Task order mismatch:** sync the markdown table across `user-stories-pipeline.mdc` and `generate-user-stories/SKILL.md` (and `master-prompt-user-stories.md` if it duplicates the sequence).
    - **Wrong output path:** align portable default in `user-stories-pipeline.mdc` +
-     `generate-user-stories/SKILL.md` (currently `docs/agile/UserStories.md`); keep
-     course- or project-specific paths **only** in master prompts or explicit user requests.
+     `generate-user-stories/SKILL.md` (currently `docs/agile/UserStories.md`).
+     Course- or project-specific path overrides in `master-prompt-user-stories.md` are
+     **intentional** when documented; only remediate if the override contradicts the
+     stated contract or lacks justification.
    - **generate-artifacts drift:** sync `.agents/skills/generate-artifacts/SKILL.md` delegation table with `artifact-pipeline.mdc`.
    - **Broken path:** fix or remove the reference.
 
