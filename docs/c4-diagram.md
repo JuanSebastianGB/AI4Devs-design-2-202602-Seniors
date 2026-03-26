@@ -117,8 +117,9 @@ C4Container
 
   %% External integrations (protocol-labeled)
   Rel(jobMgmt, jobBoards, "Publish jobs", "REST")
-  Rel(linkedin, appProcessing, "Inbound application payloads", "webhooks")
-  Rel(jobBoards, appProcessing, "Inbound application payloads", "webhooks")
+  Rel(linkedin, bff, "Inbound application payloads", "webhooks")
+  Rel(jobBoards, bff, "Inbound application payloads", "webhooks")
+  Rel(bff, appProcessing, "Validated intake payload routing", "REST")
 
   Rel(jobMgmt, linkedin, "Publish jobs", "REST")
 
